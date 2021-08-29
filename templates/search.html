@@ -76,8 +76,8 @@
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/info">INFO</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#portfolioModal1" data-bs-toggle="modal" data-bs-target="#portfolioModal1">SEARCH</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#portfolioModal2" data-bs-toggle="modal" data-bs-target="#portfolioModal2">UPDATE</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/import_csv">INSERT CSV</a></li>
-                    </ul>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#portfolioModal3" data-bs-toggle="modal" data-bs-target="#portfolioModal3">DELETE</a></li> 
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#portfolioModal4" data-bs-toggle="modal" data-bs-target="#portfolioModal4">MODEL</a></li>                    </ul>
                 </div>
             </div>
         </nav>
@@ -187,6 +187,86 @@
                 </div>
             </div>
         </div>
+            <!--DELETE-->
+    <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" aria-labelledby="portfolioModal3" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header border-0"><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                <div class="modal-body text-center pb-5">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <!-- Portfolio Modal - Title-->
+                                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">user, movie</h2>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Portfolio Modal - Image-->
+                                <form action="/show_post/" method="post">
+                                    <label>user: </label>
+                                    <input name="userid" type="text">
+                                    <br>
+                                    <br>
+                                    <label>movie: </label>
+                                    <input name="movieid" type="text">
+                                    <br>
+                                    <br>
+                                    {% csrf_token %}
+                                    <input type="hidden" name="ok" value="yes">
+                                    <input type="submit" value="Delete" class="btn btn-primary" data-bs-dismiss="modal">
+                                </form>
+                                <!-- Portfolio Modal - Text-->
+                                <br>
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--MODEL-->
+    <div class="portfolio-modal modal fade" id="portfolioModal4" tabindex="-1" aria-labelledby="portfolioModal4" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header border-0"><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                <div class="modal-body text-center pb-5">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <!-- Portfolio Modal - Title-->
+                                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">MODEL</h2>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Portfolio Modal - Image-->
+                                <form action="/model/" method="post">
+                                    <label>user: </label>
+                                    <input name="userid2" type="text">
+                                    <br>
+                                    <br>
+                                    {% csrf_token %}
+                                    <input type="hidden" name="ok2" value="yes">
+                                    <input type="submit" value="Predict" class="btn btn-primary" data-bs-dismiss="modal">
+                                </form>
+                                <!-- Portfolio Modal - Text-->
+                                <br>
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
         <script>
             function myFunction() {
                 var userid = document.getElementById("myText").value;

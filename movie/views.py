@@ -13,6 +13,7 @@ from sklearn.model_selection import train_test_split
 import csv
 import MySQLdb
 import pandas as pd
+from django.http import HttpResponseRedirect
 '''
 def import_csv(request):
     mydb = MySQLdb.connect(host='db',
@@ -64,16 +65,17 @@ def info(request):
 # POST
 @csrf_exempt
 def show_post(request):
-    if request.method == "POST":
+    if 'ok' in request.POST:
         try:
-            userid = request.POST["userid"]
-            movieid = request.POST["movieid"]
-            rating = request.POST["rating"]
-            RatingsSmall.objects.filter(userid=userid, movieid=movieid, rating=rating).delete()
+            userid = request.POST['userid']
+            movieid = request.POST['movieid']
+            print(userid, movieid)
+            RatingsSmall.objects.filter(userid=userid, movieid=movieid).delete()
             #return JsonResponse({"userid": userid, "movieid": movieid, "rating": rating, "timestamp": timestamp})
-            return JsonResponse({"status": 0})
+            return render(request, "index.html")
         except:
-            return JsonResponse({"status": 1})
+            #return JsonResponse({"status": 1})
+            return HttpResponse('ERROR')
 
 
 
@@ -98,56 +100,40 @@ def update(request, user, movie, rating):
 # POST
 @csrf_exempt
 def model(request):
-    if request.method == "POST":
+    if 'ok2' in request.POST:
         try:
-            userid = request.POST["userid"]
+            userid2 = request.POST['userid2']
             qs = RatingsSmall.objects.all()
             data = read_frame(qs)
             data['rating'] = data['rating'].astype(float)
             data['rating'] = data['rating'] / data['rating'].max()
             target = data['rating']
             del data['rating']
-            del data['index']
-            
             x_train, x_test, y_train, y_test = train_test_split(data, target, train_size=0.8, random_state=5)
 
-            qs = RatingsSmall.objects.filter(userid=userid)
+            qs = RatingsSmall.objects.filter(userid=userid2)
             df = read_frame(qs)
             del df['rating']
             del df['index']
-
+            
             clf = xgb.XGBClassifier()
             booster = xgb.Booster()
             booster.load_model('./model/xgb.model')
             clf._Booster = booster
             clf._le = LabelEncoder().fit(y_test)
+            
             y_pred = clf.predict(df)
-
+            
             max_2 = []
             max_2.append(list(y_pred).index(max(y_pred)))
             y_pred[max_2[0]] = 0
             max_2.append(list(y_pred).index(max(y_pred)))
+            
+            articles = RatingsSmall.objects.filter(userid=userid2, movieid=df['movieid'][max_2[0]]) | RatingsSmall.objects.filter(userid=userid2, movieid=df['movieid'][max_2[1]])
+            return render(request, "info.html", {'contacts': articles}) #必须用这个return\
+            #return HttpResponseRedirect("info.html",{'articles': articles})
             #return y_pred
-            return JsonResponse({"first_movie": df['movieid'][max_2[0]], "second_movie": df['movieid'][max_2[1]]})
+            #return JsonResponse({"USER": userid2, "first_movie": df['movieid'][max_2[0]], "second_movie": df['movieid'][max_2[1]]})
+            #return JsonResponse({"status": 0})
         except:
             return JsonResponse({"status": 1})
-
-    qs = RatingsSmall.objects.all()
-    data = read_frame(qs)
-    data['rating'] = data['rating'].astype(float)
-    data['rating'] = data['rating'] / data['rating'].max()
-    target = data['rating']
-    del data['rating']
-    x_train, x_test, y_train, y_test = train_test_split(data, target, train_size=0.8, random_state=5)
-
-    qs = RatingsSmall.objects.filter(userid='1')
-    df = read_frame(qs)
-    del df['rating']
-
-    clf = xgb.XGBClassifier()
-    booster = xgb.Booster()
-    booster.load_model('./model/xgb.model')
-    clf._Booster = booster
-    clf._le = LabelEncoder().fit(y_test)
-    y_pred = clf.predict(df)
-    return HttpResponse((y_pred))
